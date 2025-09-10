@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Map Generator</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #181c24;
+            color: #fff;
+        }
+
+        #map {
+            height: 70vh;
+            width: 80vw;
+            margin: 40px auto;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(44, 62, 80, 0.18);
+        }
+
+        .controls {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .controls input,
+        .controls button {
+            padding: 8px;
+            border-radius: 8px;
+            border: none;
+            margin: 0 4px;
+        }
+
+        .controls button {
+            background: #43cea2;
+            color: #181c24;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .controls button:hover {
+            background: #bfe9ff;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h2>Map Generator</h2>
+    </header>
+    <div class="controls">
+        <input type="text" id="location" placeholder="Enter a location (e.g. London)" />
+        <button onclick="generateMap()">Generate Map</button>
+    </div>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let map;
+
+        function generateMap() {
+            const location = document.getElementById('location').value;
+            if (!location) {
+                alert('Please enter a location!');
+                return;
+            }
+
+            // Use OpenStreetMap Nominatim API for geocoding
+            fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert('Location not found!');
+                        return;
+                    }
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+
+                    if (map) {
+                        map.setView([lat, lon], 13);
+                    } else {
+                        map = L.map('map').setView([lat, lon], 13);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+                    }
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(location)
+                        .openPopup();
+                })
+                .catch(() => alert('Error fetching location!'));
+        }
+    </script>
+</body>
+
+</html>

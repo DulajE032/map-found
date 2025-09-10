@@ -1,0 +1,41 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #181c24;
+    color: #fff;
+}
+
+#map {
+    height: 70vh;
+    width: 80vw;
+    margin: 40px auto;
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(44, 62, 80, 0.18);
+}
+
+header {
+    text-align: center;
+    margin-top: 24px;
+}
+
+.controls {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.controls input,
+.controls button {
+    padding: 8px;
+    border-radius: 8px;
+    border: none;
+    margin: 0 4px;
+}
+
+.controls button {
+    background: #43cea2;
+    color: #181c24;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.controls button:hover {

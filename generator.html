@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Map Generator</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="generator.css" />
+</head>
+
+<body>
+    <header>
+        <h2>Map Generator</h2>
+    </header>
+    <div class="controls">
+        <!-- Only show country map -->
+        <input type="text" id="location" placeholder="Enter a country (e.g. Sri Lanka)" />
+        <button onclick="generateMap()">Generate Map</button>
+    </div>
+    <div id="map"></div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        let map;
+
+        function generateMap() {
+            const location = document.getElementById('location').value;
+            if (!location) {
+                alert('Please enter a country!');
+                return;
+            }
+
+            fetch(`https://nominatim.openstreetmap.org/search?country=${encodeURIComponent(location)}&format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length === 0) {
+                        alert('Country not found!');
+                        return;
+                    }
+                    const lat = data[0].lat;
+                    const lon = data[0].lon;
+
+                    if (map) {
+                        map.setView([lat, lon], 6); // Country zoom
+                    } else {
+                        map = L.map('map').setView([lat, lon], 6);
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '© OpenStreetMap contributors'
+                        }).addTo(map);
+                    }
+                    L.marker([lat, lon]).addTo(map)
+                        .bindPopup(location)
+                        .openPopup();
+                })
+                .catch(() => alert('Error fetching country!'));
+        }
+    </script>
+</body>
+
+</html>
